@@ -34,7 +34,7 @@ export default function HeroScene({
         <PerspectiveCamera
           makeDefault
           position={[0, 5, 0]}
-          fov={22}
+          fov={34}
         />
 
         <GlobalPointer />

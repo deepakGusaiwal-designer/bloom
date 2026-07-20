@@ -14,7 +14,7 @@ const MODEL_PATH = "/models/blooming_hibiscus_time-lapse_animation.glb";
 // radius ~3 with fov 22, so it sees roughly 1.2 units of height — anything
 // much above that overflows the viewport. The GLB is ~0.51 tall at bind pose,
 // which is the framing the hero was designed around.
-const TARGET_HEIGHT = 0.55;
+const TARGET_HEIGHT = 1.2;
 
 type Props = {
   introFinished: boolean;
