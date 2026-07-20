@@ -10,9 +10,11 @@ import { sceneState } from "@/lib/scene";
 
 const MODEL_PATH = "/models/blooming_hibiscus_time-lapse_animation.glb";
 
-// How tall the fully bloomed plant stands in world units — the camera rig
-// frames the subject looking at y=0.7.
-const TARGET_HEIGHT = 4.2;
+// How tall the fully bloomed plant stands in world units. The camera sits at
+// radius ~3 with fov 22, so it sees roughly 1.2 units of height — anything
+// much above that overflows the viewport. The GLB is ~0.51 tall at bind pose,
+// which is the framing the hero was designed around.
+const TARGET_HEIGHT = 0.55;
 
 type Props = {
   introFinished: boolean;
@@ -33,25 +35,21 @@ export default function HibiscusFlower({ introFinished }: Props) {
         child.receiveShadow = true;
         // The time-lapse moves parts far outside their bind-pose bounds.
         child.frustumCulled = false;
-        scene.traverse((child) => {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            child.frustumCulled = false;
 
-            const mat = child.material as THREE.MeshStandardMaterial;
+        const mat = child.material as THREE.MeshStandardMaterial;
 
-            if (mat.name === "Petal") {
-              mat.color.set("#ff2056"); 
-            }
-            if (mat.name === "Leaf") {
-              mat.color.set("#ff2056"); 
-            }
-          }
-        });
-
+        if (mat.name === "Petal" || mat.name === "Leaf") {
+          mat.color.set("#ff2056");
+        }
       }
     });
+
+    // useGLTF hands back a shared, cached scene, so this effect can run
+    // against a scene a previous run already fitted (StrictMode, HMR, a
+    // remount). Measure from a clean transform every time, or the fit
+    // compounds and dev stops matching production.
+    scene.scale.setScalar(1);
+    scene.position.set(0, 0, 0);
 
     // Measure the plant at the final (fully bloomed) frame, so the framing
     // fits the end of the time-lapse rather than the tiny sprout at t=0.
